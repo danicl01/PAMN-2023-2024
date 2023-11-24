@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "478081371805",
+    "project_id": "bicicletaapp-2324",
+    "storage_bucket": "bicicletaapp-2324.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478081371805:android:82e68dde4351bfcdd78e74",
+        "android_client_info": {
+          "package_name": "com.example.appbike"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj1xRCpYX-_dImlk-Rp5pWOIPjeeqXmfw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
