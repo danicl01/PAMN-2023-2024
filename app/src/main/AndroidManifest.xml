@@ -18,7 +18,7 @@
             android:value="@string/google_maps_key">
         </meta-data>
         <activity
-            android:name=".Vista.AuthActivity"
+            android:name=".View.AuthActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
