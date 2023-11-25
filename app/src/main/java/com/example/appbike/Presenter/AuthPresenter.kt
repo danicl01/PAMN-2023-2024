@@ -1,6 +1,6 @@
-package com.example.appbike.Presentador
+package com.example.appbike.Presenter
 
-import com.example.appbike.Modelo.AuthModel;
+import com.example.appbike.Model.AuthModel;
 
 class AuthPresenter(private val authModel: AuthModel) {
 

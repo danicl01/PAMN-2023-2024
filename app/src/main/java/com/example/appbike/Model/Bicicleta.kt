@@ -1,4 +1,4 @@
-package com.example.appbike.Modelo
+package com.example.appbike.Model
 
 data class Bicicleta(
     var id: String? = null,

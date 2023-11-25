@@ -1,4 +1,4 @@
-package com.example.appbike.Modelo
+package com.example.appbike.Model
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth

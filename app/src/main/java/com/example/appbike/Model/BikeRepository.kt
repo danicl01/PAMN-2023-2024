@@ -1,4 +1,4 @@
-package com.example.appbike.Modelo
+package com.example.appbike.Model
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

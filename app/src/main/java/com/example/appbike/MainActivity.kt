@@ -4,8 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.Log.d
-import com.example.appbike.Modelo.Bicicleta
-import com.example.appbike.Modelo.BikeRepository
+import com.example.appbike.Model.Bicicleta
+import com.example.appbike.Model.BikeRepository
 import com.google.firebase.analytics.FirebaseAnalytics
 
 class MainActivity : AppCompatActivity() {

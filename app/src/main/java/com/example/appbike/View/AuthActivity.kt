@@ -1,18 +1,16 @@
-package com.example.appbike.Vista
+package com.example.appbike.View
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import com.example.appbike.MainActivity
-import com.example.appbike.Presentador.AuthPresenter
-import com.example.appbike.Modelo.AuthModel
-import com.example.appbike.Modelo.Bicicleta
-import com.example.appbike.Modelo.BikeRepository
+import com.example.appbike.Presenter.AuthPresenter
+import com.example.appbike.Model.AuthModel
+import com.example.appbike.Model.Bicicleta
+import com.example.appbike.Model.BikeRepository
 import com.example.appbike.R
-import com.google.firebase.analytics.FirebaseAnalytics
 
 class AuthActivity : AppCompatActivity(), AuthPresenter.View {
 
@@ -47,7 +45,7 @@ class AuthActivity : AppCompatActivity(), AuthPresenter.View {
             val password = passwordText.text.toString()
             authPresenter.signUp(email, password)
             val bikeRepository = BikeRepository()
-/*
+
 // Guardar una bicicleta
             val nuevaBicicleta = Bicicleta(estado = "En espera", latitud = 40.7128, altitud = -74.0060)
             bikeRepository.guardarBicicleta(nuevaBicicleta) { exito ->
@@ -63,7 +61,7 @@ class AuthActivity : AppCompatActivity(), AuthPresenter.View {
                 for (bicicleta in bicicletas) {
                     Log.d("TAG", "ID: ${bicicleta.id}, Estado: ${bicicleta.estado}, Latitud: ${bicicleta.latitud}, Altitud: ${bicicleta.altitud}")
                 }
-            }*/
+            }
         }
 
         logInButton.setOnClickListener {
