@@ -1,7 +1,10 @@
 package com.example.appbike.Modelo
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class AuthModel {
 
@@ -12,6 +15,22 @@ class AuthModel {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(true, null)
+                    val user = firebaseAuth.currentUser
+                    if (user != null) {
+                        // UID del usuario registrado
+                        val uid = user.uid
+
+                        // Crear referencia a la base de datos
+                        val database: FirebaseDatabase = FirebaseDatabase.getInstance("https://bicicletaapp-2324-default-rtdb.europe-west1.firebasedatabase.app")
+                        val usuarioRef: DatabaseReference = database.reference.child("usuarios")
+
+                        val nombre = "Nombre del Usuario"
+                        val infoUsuario = HashMap<String, Any>()
+                        infoUsuario["nombre"] = nombre
+                        infoUsuario["correo"] = email
+
+                        usuarioRef.setValue(infoUsuario)
+                    }
                 } else {
                     callback(false, task.exception?.message)
                 }
