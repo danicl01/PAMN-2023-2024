@@ -10,6 +10,7 @@ import com.example.appbike.Presenter.AuthPresenter
 import com.example.appbike.Model.AuthModel
 import com.example.appbike.Model.Bicicleta
 import com.example.appbike.Model.BikeRepository
+
 import com.example.appbike.R
 
 class AuthActivity : AppCompatActivity(), AuthPresenter.View {
