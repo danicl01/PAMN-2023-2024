@@ -11,17 +11,23 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.appbike.Model.Bicicleta
+import com.example.appbike.Model.BikeRepository
+import com.example.appbike.Presenter.BikeLoader
+import com.example.appbike.Presenter.BikePresenter
 import com.example.appbike.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class MapActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
 
     private lateinit var map: GoogleMap
-    val initialLocation = LatLng(37.7749, -122.4194) // Coordenadas para San Francisco (puedes cambiarlas)
+    val initialLocation = LatLng(37.7749, -122.4194) // Coordenadas para San Francisco
+    private lateinit var bikeLoader: BikeLoader
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
@@ -34,11 +40,18 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val goToAuthButton = findViewById<Button>(R.id.goToAuthButton)
 
+        //Presenter initialize
+        val bikeRepository = BikeRepository()
+        bikeLoader = BikePresenter(bikeRepository, this)
+
         goToAuthButton.setOnClickListener {
             Log.d("MapActivity", "Botón presionado. Iniciando AuthActivity.")
             val intent = Intent(this, AuthActivity::class.java)
             startActivity(intent)
         }
+
+        //load bikes when start activity
+        bikeLoader.loadBikes()
 
 
     }
@@ -105,6 +118,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             else -> {
             }
+        }
+    }
+
+    override fun displayBikes(bicicletas: List<Bicicleta>) {
+        for (bicicleta in bicicletas) {
+            // Agregar marcadores al mapa, por ejemplo
+            val bikeLocation = LatLng(bicicleta.latitud, bicicleta.altitud)
+            map.addMarker(MarkerOptions().position(bikeLocation).title("Bicicleta"))
         }
     }
 
