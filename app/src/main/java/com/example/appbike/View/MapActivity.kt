@@ -26,7 +26,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
 
     private lateinit var map: GoogleMap
-    val initialLocation = LatLng(37.7749, -122.4194) // Coordenadas para San Francisco
     private lateinit var bikeLoader: BikeLoader
 
     companion object {
@@ -123,7 +122,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
 
     override fun displayBikes(bicicletas: List<Bicicleta>) {
         for (bicicleta in bicicletas) {
-            // Agregar marcadores al mapa, por ejemplo
             val bikeLocation = LatLng(bicicleta.latitud, bicicleta.altitud)
             map.addMarker(MarkerOptions().position(bikeLocation).title("Bicicleta"))
         }
