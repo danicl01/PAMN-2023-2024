@@ -64,7 +64,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         val initialLocation = LatLng(37.7749, -122.4194) // Coordenadas para San Francisco (puedes cambiarlas)
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 12.0f))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 15.0f))
 
         enableLocation()
     }

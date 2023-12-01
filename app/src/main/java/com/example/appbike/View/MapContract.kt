@@ -6,4 +6,10 @@ interface MapContract {
     interface View {
         fun displayBikes(bicicletas: List<Bicicleta>)
     }
+
+    interface  Presenter {
+    }
+
+    interface  Model {
+    }
 }
