@@ -1,4 +1,4 @@
-package com.example.appbike.Presenter
+package com.example.appbike.presenter
 
 interface BikeLoader {
     fun loadBikes()

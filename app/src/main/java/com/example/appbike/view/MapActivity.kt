@@ -1,33 +1,38 @@
-package com.example.appbike.View
+package com.example.appbike.view
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.appbike.Model.Bicicleta
-import com.example.appbike.Model.BikeRepository
-import com.example.appbike.Presenter.BikeLoader
-import com.example.appbike.Presenter.BikePresenter
+import com.example.appbike.model.Bicicleta
+import com.example.appbike.model.BikeRepository
+import com.example.appbike.presenter.BikeLoader
+import com.example.appbike.presenter.BikePresenter
 import com.example.appbike.R
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
+class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, GoogleMap.OnMarkerClickListener {
+
 
     private lateinit var map: GoogleMap
     private lateinit var bikeLoader: BikeLoader
+    private var latitudActual: Double = 0.0
+    private var longitudActual: Double = 0.0
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
@@ -45,15 +50,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
         bikeLoader = BikePresenter(bikeRepository, this)
 
         goToAuthButton.setOnClickListener {
-            Log.d("MapActivity", "Botón presionado. Iniciando AuthActivity.")
+            Log.d("MapActivity", "Button pressed. Initialing AuthActivity.")
             val intent = Intent(this, AuthActivity::class.java)
             startActivity(intent)
         }
-
         //load bikes when start activity
         bikeLoader.loadBikes()
-
-
     }
 
     private fun createFragment() {
@@ -63,10 +65,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        val initialLocation = LatLng(37.7749, -122.4194) // Coordenadas para San Francisco (puedes cambiarlas)
+        val initialLocation = LatLng(37.7749, -122.4194) // Coordenadas para San Francisco
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 15.0f))
-
         enableLocation()
+        map.setOnMarkerClickListener(this)
     }
 
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
@@ -79,6 +81,15 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
         if (!::map.isInitialized) return
         if (isLocationPermissionGranted()) {
             map.isMyLocationEnabled = true
+            // Current Location
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        latitudActual = it.latitude
+                        longitudActual = it.longitude
+                    }
+                }
         } else {
             requestLocationPermission()
         }
@@ -124,9 +135,21 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View {
     override fun displayBikes(bicicletas: List<Bicicleta>) {
         for (bicicleta in bicicletas) {
             val bikeLocation = LatLng(bicicleta.latitud, bicicleta.altitud)
-            map.addMarker(MarkerOptions().position(bikeLocation).title("Bicicleta"))
+            map.addMarker(MarkerOptions().position(bikeLocation))
         }
     }
 
+    override fun onMarkerClick(marker: Marker): Boolean {
+        val bikeId = marker.tag as? String
+        val distanceKm = calculateDistanceFromCurrentToBike(marker.position)
+        val toastMessage = "ID: $bikeId\nDistance to bike: ${String.format("%.2f", distanceKm)} km"
+        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show()
+        return true
+    }
 
+    private fun calculateDistanceFromCurrentToBike(bikePosition: LatLng): Double {
+        val result = FloatArray(10)
+        Location.distanceBetween(latitudActual, longitudActual, bikePosition.latitude, bikePosition.longitude, result)
+        return result[0].toDouble() / 1000
+    }
 }

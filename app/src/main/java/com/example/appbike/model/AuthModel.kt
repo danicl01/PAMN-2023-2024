@@ -1,6 +1,5 @@
-package com.example.appbike.Model
+package com.example.appbike.model
 
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference

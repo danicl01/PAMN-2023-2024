@@ -21,7 +21,7 @@
             android:value="@string/google_maps_key">
         </meta-data>
         <activity
-            android:name=".View.MapActivity"
+            android:name=".view.MapActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".View.AuthActivity"
+            android:name=".view.AuthActivity"
             android:exported="true">
         </activity>
     </application>

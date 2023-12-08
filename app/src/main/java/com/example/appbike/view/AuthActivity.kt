@@ -1,15 +1,14 @@
-package com.example.appbike.View
+package com.example.appbike.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import com.example.appbike.MainActivity
-import com.example.appbike.Presenter.AuthPresenter
-import com.example.appbike.Model.AuthModel
-import com.example.appbike.Model.Bicicleta
-import com.example.appbike.Model.BikeRepository
+import com.example.appbike.presenter.AuthPresenter
+import com.example.appbike.model.AuthModel
+import com.example.appbike.model.Bicicleta
+import com.example.appbike.model.BikeRepository
 
 import com.example.appbike.R
 

@@ -1,7 +1,7 @@
-package com.example.appbike.Presenter
+package com.example.appbike.presenter
 
-import com.example.appbike.Model.BikeRepository
-import com.example.appbike.View.MapContract
+import com.example.appbike.model.BikeRepository
+import com.example.appbike.view.MapContract
 
 class BikePresenter(private val bikeRepository: BikeRepository, private val mapView: MapContract.View) : BikeLoader {
 
