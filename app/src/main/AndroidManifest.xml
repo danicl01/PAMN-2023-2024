@@ -30,7 +30,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.AuthActivity"
+            android:name=".view.AuthSignUpActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".view.SignInActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".view.AuthLogInActivity"
             android:exported="true">
         </activity>
     </application>

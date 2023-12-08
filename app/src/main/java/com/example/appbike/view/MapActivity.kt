@@ -25,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.auth.FirebaseAuth
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, GoogleMap.OnMarkerClickListener {
 
@@ -50,9 +51,21 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         bikeLoader = BikePresenter(bikeRepository, this)
 
         goToAuthButton.setOnClickListener {
-            Log.d("MapActivity", "Button pressed. Initialing AuthActivity.")
-            val intent = Intent(this, AuthActivity::class.java)
-            startActivity(intent)
+            // Verificar si hay un usuario logeado
+            val currentUser = FirebaseAuth.getInstance().currentUser
+
+            if (currentUser != null) {
+                // Ya hay un usuario logeado, puedes redirigir a la pantalla de perfil u otra actividad
+                Log.d("MapActivity", "Usuario logeado. Redirigiendo a la pantalla de perfil.")
+                // Ejemplo de redirección a la pantalla de perfil
+                val intent = Intent(this, SignInActivity::class.java)
+                startActivity(intent)
+            } else {
+                // No hay usuario logeado, inicia la actividad de autenticación
+                Log.d("MapActivity", "Ningún usuario logeado. Iniciando AuthActivity.")
+                val intent = Intent(this, AuthSignUpActivity::class.java)
+                startActivity(intent)
+            }
         }
         //load bikes when start activity
         bikeLoader.loadBikes()

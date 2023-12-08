@@ -1,46 +1,45 @@
 package com.example.appbike.presenter
 
-import com.example.appbike.model.AuthModel;
+import android.content.Context
+import android.content.Intent
+import androidx.core.content.ContextCompat.startActivity
+import com.example.appbike.model.AuthSignInModel
+import com.example.appbike.model.AuthSignUpModel
+import com.example.appbike.view.SignInActivity
+import com.google.firebase.auth.FirebaseUser
 
-class AuthPresenter(private val authModel: AuthModel) {
+class AuthPresenter() {
 
-    interface View {
-        fun showSuccessMessage(message: String)
-        fun showErrorMessage(message: String)
-    }
+    private val AuthSignInModel = AuthSignInModel()
+    private val AuthSignUpModel = AuthSignUpModel()
 
-    private var view: View? = null
 
-    fun attachView(view: View) {
-        this.view = view
-    }
-
-    fun detachView() {
-        view = null
-    }
 
     fun signUp(email: String, password: String) {
-        authModel.signUp(email, password) { isSuccess, message ->
+        AuthSignUpModel.signUp(email, password) { isSuccess, message ->
             if (isSuccess) {
-                view?.showSuccessMessage("Registro exitoso")
+
             } else {
-                view?.showErrorMessage(message ?: "Error desconocido en el registro")
+
             }
         }
     }
 
-    fun signIn(email: String, password: String) {
-        authModel.signIn(email, password) { isSuccess, message ->
+    fun signIn(email: String, password: String, context: Context) {
+        AuthSignInModel.signIn(email, password) { isSuccess, message ->
             if (isSuccess) {
-                view?.showSuccessMessage("Inicio de sesión exitoso")
+                val intent = Intent(context, SignInActivity::class.java)
+                context.startActivity(intent)
             } else {
-                view?.showErrorMessage(message ?: "Error desconocido en el inicio de sesión")
+
             }
         }
     }
+
+
 
     fun checkCurrentUser() {
-        val currentUser = authModel.getCurrentUser()
+        val currentUser = AuthSignInModel.getCurrentUser()
         if (currentUser != null) {
             // El usuario está autenticado
             // Puedes realizar acciones adicionales si es necesario
@@ -50,8 +49,12 @@ class AuthPresenter(private val authModel: AuthModel) {
         }
     }
 
+    fun getCurrentUser(): FirebaseUser? {
+        return AuthSignInModel.getCurrentUser()
+    }
+
     fun signOut() {
-        authModel.signOut()
+        AuthSignInModel.signOut()
         // Puedes realizar acciones adicionales después de cerrar sesión si es necesario
     }
 }

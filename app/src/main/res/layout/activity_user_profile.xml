@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.SignInActivity">
+
+    <TextView
+        android:id="@+id/userEmailTextView"
+        android:layout_width="284dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="127dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginBottom="614dp"
+        android:text="Email"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/userNameTextView"
+        android:layout_width="285dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="188dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="560dp"
+        android:text="Usuario"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/userEmailTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="121dp"
+        android:layout_marginEnd="312dp"
+        android:layout_marginBottom="626dp"
+        android:text="Email: "
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/userNameTextView2"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="187dp"
+        android:layout_marginEnd="312dp"
+        android:layout_marginBottom="566dp"
+        android:text="Usuario:"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="260dp"
+        android:layout_marginEnd="256dp"
+        android:layout_marginBottom="472dp"
+        android:text="Mapa" />
+
+    <Button
+        android:id="@+id/logOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="255dp"
+        android:layout_marginTop="261dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="469dp"
+        android:text="Logout" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="147dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="123dp"
+        android:layout_marginEnd="123dp"
+        android:layout_marginBottom="710dp"
+        android:text="Perfil"
+        android:textAlignment="center"
+        android:textSize="50sp" />
+
+</RelativeLayout>

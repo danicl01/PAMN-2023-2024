@@ -29,7 +29,7 @@ class BikeRepository {
     }
 
     fun obtenerBicicletas(callback: (List<Bicicleta>) -> Unit) {
-        bicicletasReference.addListenerForSingleValueEvent(object : ValueEventListener {
+        bicicletasReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val bicicletasList = mutableListOf<Bicicleta>()
                 for (childSnapshot in snapshot.children) {
