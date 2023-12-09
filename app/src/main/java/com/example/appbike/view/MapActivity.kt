@@ -7,8 +7,10 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -148,15 +150,33 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     override fun displayBikes(bicicletas: List<Bicicleta>) {
         for (bicicleta in bicicletas) {
             val bikeLocation = LatLng(bicicleta.latitud, bicicleta.altitud)
-            map.addMarker(MarkerOptions().position(bikeLocation))
+            map.addMarker(MarkerOptions().position(bikeLocation).title(bicicleta.name))
         }
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
+        // Bike Info
         val bikeId = marker.tag as? String
         val distanceKm = calculateDistanceFromCurrentToBike(marker.position)
-        val toastMessage = "ID: $bikeId\nDistance to bike: ${String.format("%.2f", distanceKm)} km"
-        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show()
+
+        // Dialog
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Información de la Bicicleta")
+        builder.setMessage("ID: $bikeId\nDistancia: ${String.format("%.2f", distanceKm)} km")
+
+        val checkBoxReservar = CheckBox(this)
+        checkBoxReservar.text = "Reservar"
+        builder.setView(checkBoxReservar)
+
+        builder.setPositiveButton("Alquilar") { dialog, which ->
+            if (checkBoxReservar.isChecked) {
+                Toast.makeText(this, "Bicicleta reservada", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Bicicleta alquilada", Toast.LENGTH_SHORT).show()
+            }
+        }
+        builder.setNegativeButton("Cancelar", null)
+        builder.show()
         return true
     }
 
