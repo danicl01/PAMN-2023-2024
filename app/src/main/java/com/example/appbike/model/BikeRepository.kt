@@ -9,17 +9,17 @@ import com.google.firebase.database.ValueEventListener
 class BikeRepository {
 
     private val database: FirebaseDatabase = FirebaseDatabase.getInstance("https://bicicletaapp-2324-default-rtdb.europe-west1.firebasedatabase.app")
-    private val bicicletasReference: DatabaseReference = database.reference.child("bicicletas")
+    private val bikeReference: DatabaseReference = database.reference.child("bicicletas")
 
-    fun guardarBicicleta(bicicleta: Bicicleta, callback: (Boolean) -> Unit) {
+    fun saveBikes(bike: Bike, callback: (Boolean) -> Unit) {
         // Obtener un nuevo ID único para la bicicleta
-        val bicicletaId = bicicletasReference.push().key
+        val bikeId = bikeReference.push().key
 
         // Asignar el ID único a la bicicleta
-        bicicleta.id = bicicletaId
+        bike.id = bikeId
 
         // Crear un nuevo nodo para la bicicleta
-        bicicletasReference.child(bicicletaId!!).setValue(bicicleta)
+        bikeReference.child(bikeId!!).setValue(bike)
             .addOnSuccessListener {
                 callback(true)
             }
@@ -28,15 +28,15 @@ class BikeRepository {
             }
     }
 
-    fun obtenerBicicletas(callback: (List<Bicicleta>) -> Unit) {
-        bicicletasReference.addValueEventListener(object : ValueEventListener {
+    fun obtainBike(callback: (List<Bike>) -> Unit) {
+        bikeReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val bicicletasList = mutableListOf<Bicicleta>()
+                val bikeList = mutableListOf<Bike>()
                 for (childSnapshot in snapshot.children) {
-                    val bicicleta = childSnapshot.getValue(Bicicleta::class.java)
-                    bicicleta?.let { bicicletasList.add(it) }
+                    val bike = childSnapshot.getValue(Bike::class.java)
+                    bike?.let { bikeList.add(it) }
                 }
-                callback(bicicletasList)
+                callback(bikeList)
             }
 
             override fun onCancelled(error: DatabaseError) {

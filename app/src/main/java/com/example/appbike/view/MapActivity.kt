@@ -14,7 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.appbike.model.Bicicleta
+import com.example.appbike.model.Bike
 import com.example.appbike.model.BikeRepository
 import com.example.appbike.presenter.BikeLoader
 import com.example.appbike.presenter.BikePresenter
@@ -147,10 +147,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         }
     }
 
-    override fun displayBikes(bicicletas: List<Bicicleta>) {
-        for (bicicleta in bicicletas) {
-            val bikeLocation = LatLng(bicicleta.latitud, bicicleta.altitud)
-            map.addMarker(MarkerOptions().position(bikeLocation).title(bicicleta.name))
+    override fun displayBikes(bikes: List<Bike>) {
+        for (bike in bikes) {
+            val bikeLocation = LatLng(bike.latitude, bike.altitude)
+            map.addMarker(MarkerOptions().position(bikeLocation).title(bike.name))
         }
     }
 

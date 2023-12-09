@@ -11,6 +11,8 @@ import com.example.appbike.MainActivity
 import com.example.appbike.R
 import com.example.appbike.model.AuthSignInModel
 import com.example.appbike.model.AuthSignUpModel
+import com.example.appbike.model.Bike
+import com.example.appbike.model.BikeRepository
 import com.example.appbike.presenter.AuthPresenter
 import com.google.firebase.auth.FirebaseAuth
 
@@ -50,9 +52,11 @@ class SignInActivity : AppCompatActivity() {
             startActivity(Intent(this, MapActivity::class.java))
         }
 
+
         logoutButton.setOnClickListener {
             // Cerrar sesión
             authPresenter.signOut()
+            finish()
             startActivity(Intent(this, MapActivity::class.java))
         }
     }
