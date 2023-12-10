@@ -4,16 +4,24 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.example.appbike.model.Bike
 import com.example.appbike.model.BikeRepository
 import com.example.appbike.presenter.BikeLoader
@@ -24,6 +32,8 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -152,35 +162,56 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     override fun displayBikes(bikes: List<Bike>) {
         for (bike in bikes) {
             val bikeLocation = LatLng(bike.latitude, bike.altitude)
-            map.addMarker(MarkerOptions().position(bikeLocation).title(bike.name))
+            val markerColor = when(bike.state) {
+                "En espera" ->  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                "Alquilada" ->  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+                "Averiada" ->  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+                else -> {
+                    null
+                }
+            }
+            if (markerColor != null) {
+                map.addMarker(MarkerOptions().position(bikeLocation).title(bike.name).icon(markerColor))
+            }
+
         }
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
         // Bike Info
-        val bikeId = marker.tag as? String
+        //val bikeId = marker.tag as? String
         val distanceKm = calculateDistanceFromCurrentToBike(marker.position)
 
         // Dialog
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Información de la Bicicleta")
-        builder.setMessage("ID: $bikeId\nDistancia: ${String.format("%.2f", distanceKm)} km")
+        val inflater = LayoutInflater.from(this)
+        val dialogView = inflater.inflate(R.layout.dialog_bike_info, null)
+        builder.setView(dialogView)
 
-        val checkBoxReservar = CheckBox(this)
-        checkBoxReservar.text = "Reservar"
-        builder.setView(checkBoxReservar)
+        // Obtén referencias a los elementos del diseño personalizado
+        val titleTextView = dialogView.findViewById<TextView>(R.id.textViewDialogTitle)
+        val bikeIconImageView = dialogView.findViewById<ImageView>(R.id.imageViewBikeIcon)
+        val bikeInfoTextView = dialogView.findViewById<TextView>(R.id.textViewBikeInfo)
+        val checkBoxReservar = dialogView.findViewById<CheckBox>(R.id.checkBoxReservar)
+
+        // Establece la información de la bicicleta en los elementos del diseño personalizado
+        titleTextView.text = "Información de la Bicicleta"
+        bikeIconImageView.setImageResource(R.drawable.ic_bike_24) // Reemplaza con el recurso correcto
+        bikeInfoTextView.text = "${marker.title} \nA: ${String.format("%.2f", distanceKm)} km"
+
 
         builder.setPositiveButton("Alquilar") { dialog, which ->
             if (checkBoxReservar.isChecked) {
                 Toast.makeText(this, "Bicicleta reservada", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Bicicleta alquilada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Debe seleccionar una bicicleta", Toast.LENGTH_SHORT).show()
             }
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
         return true
     }
+
 
     private fun calculateDistanceFromCurrentToBike(bikePosition: LatLng): Double {
         val result = FloatArray(10)
