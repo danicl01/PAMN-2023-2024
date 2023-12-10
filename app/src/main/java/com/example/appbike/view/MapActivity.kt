@@ -42,6 +42,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Thread.sleep(1500)
+        setTheme(R.style.SplashTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         createFragment()
