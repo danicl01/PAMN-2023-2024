@@ -1,5 +1,6 @@
 package com.example.appbike.presenter
 
+import com.example.appbike.model.Bike
 import com.example.appbike.model.BikeRepository
 import com.example.appbike.view.MapContract
 

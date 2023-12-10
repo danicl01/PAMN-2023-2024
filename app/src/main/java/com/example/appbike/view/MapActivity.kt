@@ -92,7 +92,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        val initialLocation = LatLng(37.7749, -122.4194) // Coordenadas para San Francisco
+        val initialLocation = LatLng(27.953674, -15.587164) // Coordenadas San Bartolomé de Tirajana
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 15.0f))
         enableLocation()
         map.setOnMarkerClickListener(this)
