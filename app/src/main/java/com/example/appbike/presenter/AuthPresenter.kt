@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.core.content.ContextCompat.startActivity
 import com.example.appbike.model.AuthSignInModel
 import com.example.appbike.model.AuthSignUpModel
+import com.example.appbike.view.MapActivity
 import com.example.appbike.view.SignInActivity
 import com.google.firebase.auth.FirebaseUser
 
@@ -53,8 +54,10 @@ class AuthPresenter() {
         return AuthSignInModel.getCurrentUser()
     }
 
-    fun signOut() {
+    fun signOut(context: Context) {
         AuthSignInModel.signOut()
+        val intent = Intent(context, MapActivity::class.java)
+        context.startActivity(intent)
         // Puedes realizar acciones adicionales después de cerrar sesión si es necesario
     }
 }

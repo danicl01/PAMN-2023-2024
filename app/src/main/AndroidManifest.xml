@@ -41,6 +41,10 @@
             android:name=".view.AuthLogInActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".view.PaymentActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

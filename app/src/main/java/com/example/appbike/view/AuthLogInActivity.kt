@@ -40,9 +40,11 @@ class AuthLogInActivity : AppCompatActivity() {
 
         signUpButton.setOnClickListener {
             startActivity(Intent(this, AuthSignUpActivity::class.java))
+            finish()
         }
         signUpButton2.setOnClickListener {
             startActivity(Intent(this, AuthSignUpActivity::class.java))
+            finish()
         }
 
         logInButton.setOnClickListener {
