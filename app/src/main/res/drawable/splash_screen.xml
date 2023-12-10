@@ -9,4 +9,9 @@
         </shape>
     </item>
 
+    <item android:drawable="@mipmap/bike_splash"
+        android:gravity="center"
+        android:width="150dp"
+        android:height="150dp" />
+
 </layer-list>
