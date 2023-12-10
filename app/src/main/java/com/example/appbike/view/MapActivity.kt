@@ -27,6 +27,8 @@ import com.example.appbike.model.BikeRepository
 import com.example.appbike.presenter.BikeLoader
 import com.example.appbike.presenter.BikePresenter
 import com.example.appbike.R
+import com.example.appbike.model.UserRepository
+import com.example.appbike.presenter.RentBikePresenter
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -44,6 +46,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
 
     private lateinit var map: GoogleMap
     private lateinit var bikeLoader: BikeLoader
+    private lateinit var presenter: RentBikePresenter
+    private lateinit var userRepository: UserRepository
+
     private var latitudActual: Double = 0.0
     private var longitudActual: Double = 0.0
 
@@ -61,7 +66,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         val goToAuthButton = findViewById<ImageButton>(R.id.goToAuthButton)
 
         //Presenter initialize
+        userRepository = UserRepository()
+
         val bikeRepository = BikeRepository()
+        presenter = RentBikePresenter(this, userRepository,bikeRepository )
         bikeLoader = BikePresenter(bikeRepository, this)
 
         goToAuthButton.setOnClickListener {
@@ -92,8 +100,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        val initialLocation = LatLng(27.953674, -15.587164) // Coordenadas San Bartolomé de Tirajana
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 15.0f))
+        val initialLocation = LatLng(28.09973, -15.41343) // Coordenadas para LPGC
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 12.0f))
         enableLocation()
         map.setOnMarkerClickListener(this)
     }
@@ -201,11 +209,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
 
 
         builder.setPositiveButton("Alquilar") { dialog, which ->
-            if (checkBoxReservar.isChecked) {
-                Toast.makeText(this, "Bicicleta reservada", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Debe seleccionar una bicicleta", Toast.LENGTH_SHORT).show()
-            }
+            val isUserLoggedIn = userRepository.isUserLoggedIn()
+            val isBikeSelected = checkBoxReservar.isChecked
+            presenter.onRentButtonClick(isUserLoggedIn, isBikeSelected,marker)
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
@@ -217,5 +223,23 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         val result = FloatArray(10)
         Location.distanceBetween(latitudActual, longitudActual, bikePosition.latitude, bikePosition.longitude, result)
         return result[0].toDouble() / 1000
+    }
+
+    override fun showBikeReservedMessage() {
+        Toast.makeText(this, "Bicicleta reservada", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showMustSelectBikeMessage() {
+        Toast.makeText(this, "Debe seleccionar una bicicleta", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showUserNotPaidMessage() {
+        Toast.makeText(this, "Usuario no registrado como usuario de pago", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun navigateToLoginScreen() {
+        // Redirigir a la pantalla de inicio de sesión
+        val intent = Intent(this, AuthSignUpActivity::class.java)
+        startActivity(intent)
     }
 }

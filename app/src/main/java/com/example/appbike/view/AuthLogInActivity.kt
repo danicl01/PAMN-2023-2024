@@ -28,7 +28,6 @@ class AuthLogInActivity : AppCompatActivity() {
         // Setup
         setup()
     }
-
     private fun setup() {
         title = "Autenticación"
 

@@ -12,13 +12,8 @@ class BikeRepository {
     private val bikeReference: DatabaseReference = database.reference.child("bicicletas")
 
     fun saveBikes(bike: Bike, callback: (Boolean) -> Unit) {
-        // Obtener un nuevo ID único para la bicicleta
         val bikeId = bikeReference.push().key
-
-        // Asignar el ID único a la bicicleta
         bike.id = bikeId
-
-        // Crear un nuevo nodo para la bicicleta
         bikeReference.child(bikeId!!).setValue(bike)
             .addOnSuccessListener {
                 callback(true)
@@ -44,5 +39,48 @@ class BikeRepository {
             }
         })
     }
+
+    fun updateBikeState(bikeName: String, newState: String, callback: (Boolean) -> Unit) {
+        val bikeRef = bikeReference.orderByChild("name")
+
+        bikeRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var bikeId: String? = null
+
+                for (child in snapshot.children) {
+                    val name = child.child("name").getValue(String::class.java)
+                    if (name == bikeName) {
+                        bikeId = child.key
+                        break
+                    }
+                }
+
+                if (bikeId != null) {
+                    val stateRef = bikeReference.child(bikeId).child("state")
+
+                    stateRef.setValue(newState)
+                        .addOnSuccessListener {
+                            callback(true)
+                        }
+                        .addOnFailureListener {
+                            // Manejar el fallo
+                            callback(false)
+                        }
+                } else {
+                    // Manejar el caso en que no se encuentre la bicicleta
+                    callback(false)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Manejar el error de lectura de la base de datos
+                callback(false)
+            }
+        })
+    }
+
+
+
+
 }
 
