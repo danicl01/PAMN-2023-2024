@@ -2,6 +2,7 @@ package com.example.appbike.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Html
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -21,7 +22,10 @@ class PaymentActivity : AppCompatActivity(), PaymentView {
         val titleTextView = findViewById<TextView>(R.id.titleTextView)
         val payButton = findViewById<Button>(R.id.payButton)
         val cancelButton = findViewById<Button>(R.id.cancelButton)
-
+        val textoHTML = resources.getString(R.string.subscribe_text)
+        val bodyextView = findViewById<TextView>(R.id.textView10)
+        val textoFormateado = Html.fromHtml(textoHTML)
+        bodyextView.text = textoFormateado
         titleTextView.text = "Pagar Suscripción"
 
         val model = PaymentModel()

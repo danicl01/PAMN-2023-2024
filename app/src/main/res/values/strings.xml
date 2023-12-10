@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">AppBike</string>
+    <string name="subscribe_text">
+        <![CDATA[
+    <p><b>Bienvenido a <font color="#4285F4">GRANCA BIKE</font> - Tu Pasaporte a una Aventura en Bicicleta!</b></p>
+
+    <p>Descubre la libertad de explorar tu ciudad sobre dos ruedas con <b>GRANCA BIKE</b>. ¿Te encantaría disfrutar del aire fresco, mantenerte en forma y llegar a tu destino de una manera rápida y sostenible?</p>
+
+    <p><b>Beneficios de Suscribirte:</b></p>
+    <ol>
+        <li><b>Alquiler Conveniente:</b> Accede a nuestras bicicletas en puntos estratégicos de la ciudad. ¡La movilidad sin complicaciones está a solo unos pasos!</li>
+        <li><b>Tarifas Asequibles:</b> Por tan solo <font color="#4285F4">10 euros mensuales</font>, desbloquea el acceso a nuestras bicicletas de alta calidad. ¡Ahorra dinero y contribuye al medio ambiente al mismo tiempo!</li>
+        <li><b>Flexibilidad Total:</b> Alquila por minutos, horas o días. La elección es tuya. ¡Personaliza tu experiencia según tus necesidades!</li>
+    </ol>
+    ]]>
+    </string>
 </resources>

@@ -8,13 +8,5 @@
                 android:angle="90" />
         </shape>
     </item>
-    <item>
-        <bitmap android:src="@mipmap/bike_splash"
-            android:gravity="center"
-            android:width="10dp"
-            android:height="10dp">
 
-        </bitmap>
-
-    </item>
 </layer-list>

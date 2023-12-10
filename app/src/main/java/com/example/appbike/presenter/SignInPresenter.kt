@@ -15,6 +15,24 @@ class SignInPresenter(private val signInModel: SignInModel) {
         signInView = null
     }
 
+    fun updateUserName(newName: String) {
+        val currentUser = signInModel.getCurrentUser()
+        if (currentUser != null) {
+            signInModel.updateUserName(currentUser.uid, newName) { isSuccess, message ->
+                if (isSuccess) {
+                    signInView?.showSuccessMessage("Nombre actualizado exitosamente")
+                    onUserNameUpdated(newName)
+                } else {
+                    signInView?.showErrorMessage(message ?: "Error desconocido al actualizar el nombre")
+                }
+            }
+        } else {
+            signInView?.showErrorMessage("Usuario no autenticado")
+        }
+    }
+    fun onUserNameUpdated(newName: String) {
+        signInView?.updateUserName(newName)
+    }
     fun getCurrentUser() {
         val currentUser = signInModel.getCurrentUser()
         currentUser?.let {
@@ -41,5 +59,10 @@ class SignInPresenter(private val signInModel: SignInModel) {
     fun navigateToPaymentActivity() {
         signInView?.navigateToPaymentActivity()
     }
+
+    fun onEditNameButtonClicked() {
+        signInView?.showEditNamePopup()
+    }
+
 
 }

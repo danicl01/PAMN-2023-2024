@@ -10,4 +10,11 @@ interface SignInView {
 
     fun finishActivity()
 
+    fun showSuccessMessage(message:String)
+
+    fun showErrorMessage(message:String)
+
+    fun showEditNamePopup()
+
+    fun updateUserName(newName: String)
 }

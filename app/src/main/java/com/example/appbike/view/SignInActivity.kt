@@ -1,11 +1,15 @@
 package com.example.appbike.view
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.appbike.MainActivity
 import com.example.appbike.R
@@ -30,6 +34,7 @@ class SignInActivity : AppCompatActivity(), SignInView {
         val backButton = findViewById<Button>(R.id.backButton)
         val logoutButton = findViewById<Button>(R.id.logOutButton)
         val paymentButton = findViewById<Button>(R.id.paymentButton)
+        val editNameButton = findViewById<Button>(R.id.EditNamebutton)
 
         backButton.setOnClickListener {
             signInPresenter.navigateToMapActivity()
@@ -37,10 +42,14 @@ class SignInActivity : AppCompatActivity(), SignInView {
 
         logoutButton.setOnClickListener {
             signInPresenter.signOut()
+            finishActivity()
         }
 
         paymentButton.setOnClickListener {
             signInPresenter.navigateToPaymentActivity()
+        }
+        editNameButton.setOnClickListener {
+            showEditNamePopup()
         }
 
         signInPresenter.attachView(this)
@@ -72,6 +81,37 @@ class SignInActivity : AppCompatActivity(), SignInView {
     override fun onDestroy() {
         super.onDestroy()
         signInPresenter.detachView()
+    }
+
+    override fun showSuccessMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showErrorMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+    override fun updateUserName(newName: String) {
+        val userNameTextView = findViewById<TextView>(R.id.userNameTextView)
+        userNameTextView.text = newName
+    }
+    override fun showEditNamePopup() {
+        // Aquí implementa la lógica para mostrar el popup de edición de nombre
+        // Puedes usar AlertDialog u otra biblioteca de diálogo
+        // Ejemplo con AlertDialog:
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Editar Nombre")
+
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setView(input)
+
+        builder.setPositiveButton("Guardar") { _, _ ->
+            val newName = input.text.toString()
+            signInPresenter.updateUserName(newName)
+        }
+        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
+
+        builder.show()
     }
 }
 

@@ -48,6 +48,23 @@ class SignInModel {
         })
     }
 
+    fun updateUserName(userId: String, newName: String, callback: (Boolean, String?) -> Unit) {
+        val database: FirebaseDatabase = FirebaseDatabase.getInstance("https://bicicletaapp-2324-default-rtdb.europe-west1.firebasedatabase.app")
+        val usuarioRef: DatabaseReference = database.reference.child("usuarios").child(userId)
+
+        val infoUsuario = HashMap<String, Any>()
+        infoUsuario["name"] = newName
+
+        usuarioRef.updateChildren(infoUsuario)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(true, null)
+                } else {
+                    callback(false, task.exception?.message)
+                }
+            }
+    }
+
     fun signOut() {
         firebaseAuth.signOut()
     }
