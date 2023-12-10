@@ -79,6 +79,27 @@ class BikeRepository {
         })
     }
 
+    fun getBikeState(bikeName: String, callback: (String?) -> Unit) {
+        val bikeRef = bikeReference.orderByChild("name").equalTo(bikeName)
+
+        bikeRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val bikeState = snapshot.children.firstOrNull()?.child("state")?.getValue(String::class.java)
+                    callback(bikeState)
+                } else {
+                    // Manejar el caso en que no se encuentre la bicicleta
+                    callback(null)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Manejar el error de lectura de la base de datos si es necesario
+                callback(null)
+            }
+        })
+    }
+
 
 
 

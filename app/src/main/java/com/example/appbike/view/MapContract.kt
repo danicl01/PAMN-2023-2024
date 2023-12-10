@@ -10,6 +10,9 @@ interface MapContract {
         fun showMustSelectBikeMessage()
         fun showUserNotPaidMessage()
         fun navigateToLoginScreen()
+        fun showBikeNotReservedMessage()
+        fun showBikeNotAvailableMessage()
+        fun showBikeBrokenMessage()
     }
     interface Presenter {
         fun onRentButtonClick(isUserLoggedIn: Boolean, isBikeSelected: Boolean, marker: Marker)

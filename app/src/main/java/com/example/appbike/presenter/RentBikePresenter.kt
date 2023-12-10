@@ -19,28 +19,44 @@ class RentBikePresenter(
                 userRepository.getUserPaymentState(userId) { isUserPaid ->
                     if (isUserPaid) {
                         if (isBikeSelected) {
-                            val selectedBikeName = marker.title // Obtener el nombre de la bicicleta desde el Marker
-                            val newState = "Alquilada"  // Cambiar el estado a "Alquilada"
+                            val selectedBikeName =
+                                marker.title // Obtener el nombre de la bicicleta desde el Marker
+                            val newState = "Alquilada"
+                            bikeRepository.getBikeState(selectedBikeName) { bikeState ->
+                                when (bikeState) {
+                                    "En espera" -> {
+                                        // Actualizar el estado y el ID del usuario que utiliza la bicicleta
+                                        bikeRepository.updateBikeState(
+                                            selectedBikeName,
+                                            newState
+                                        ) { success ->
+                                            if (success) {
+                                                view.showBikeReservedMessage()
+                                            } else {
+                                                view.showBikeNotReservedMessage()
+                                            }
+                                        }
+                                    }
 
-                            // Actualizar el estado de la bicicleta en la base de datos
-                            bikeRepository.updateBikeState(selectedBikeName, newState) { success ->
-                                if (success) {
-                                    view.showBikeReservedMessage()
+                                    "Alquilada" -> {
+                                        // La bicicleta no está disponible para alquilar
+                                        view.showBikeNotAvailableMessage()
+                                    }
+
+                                    else -> {
+                                        // Manejar otros estados si es necesario
+                                        view.showBikeBrokenMessage()
+                                    }
                                 }
                             }
                         } else {
-                            view.showMustSelectBikeMessage()
+                            view.showUserNotPaidMessage()
                         }
-                    } else {
-                        view.showUserNotPaidMessage()
                     }
                 }
             } else {
-                // Manejar el caso en que no se pueda obtener el ID del usuario actual
-                view.showUserNotPaidMessage()
+                view.navigateToLoginScreen()
             }
-        } else {
-            view.navigateToLoginScreen()
         }
     }
 }

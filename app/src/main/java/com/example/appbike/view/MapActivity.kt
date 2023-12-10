@@ -242,4 +242,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         val intent = Intent(this, AuthSignUpActivity::class.java)
         startActivity(intent)
     }
+
+    override fun showBikeNotReservedMessage() {
+        Toast.makeText(this, "Error al reservar la bicicleta", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showBikeNotAvailableMessage() {
+        Toast.makeText(this, "Bicicleta Reservada, por favor eliga otra", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showBikeBrokenMessage() {
+        Toast.makeText(this, "Bicicleta averiada, por favor eliga otra", Toast.LENGTH_SHORT).show()
+    }
 }
