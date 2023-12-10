@@ -2,8 +2,13 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.AppBike" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">#FFA500</item>
+        <item name="colorPrimaryDark">#FFA500</item>
         <!-- Otros ajustes y personalizaciones según sea necesario -->
     </style>
 
     <style name="Theme.AppBike" parent="Base.Theme.AppBike" />
+    
+    <style name="SplashTheme" parent="Base.Theme.AppBike">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
 </resources>
