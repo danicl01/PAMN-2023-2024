@@ -1,8 +1,8 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.MapActivity">
 
     <fragment
@@ -10,7 +10,7 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="35dp"
         android:layout_marginBottom="30dp"
         tools:context=".MainActivity"/>
 
@@ -18,7 +18,6 @@
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/top_curved_cardview"
         />
 
     <TextView
@@ -33,6 +32,23 @@
         android:textSize="20sp"
         />
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        app:cardCornerRadius="30dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="10dp"
+        >
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/autocomplete_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"/>
+
+        
+    </androidx.cardview.widget.CardView>
+    
     <!-- Nueva vista en la parte inferior -->
     <View
         android:id="@+id/bottomBar"
@@ -64,6 +80,5 @@
     android:src="@drawable/map_type"
     android:drawablePadding="8dp"
     />
-
 
 </FrameLayout>

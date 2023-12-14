@@ -30,6 +30,7 @@ import com.example.appbike.presenter.BikePresenter
 import com.example.appbike.R
 import com.example.appbike.model.UserRepository
 import com.example.appbike.presenter.RentBikePresenter
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -40,6 +41,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.firebase.auth.FirebaseAuth
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, GoogleMap.OnMarkerClickListener {
@@ -49,6 +54,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     private lateinit var bikeLoader: BikeLoader
     private lateinit var presenter: RentBikePresenter
     private lateinit var userRepository: UserRepository
+    private lateinit var autocompleteFragment: AutocompleteSupportFragment
 
     private var latitudActual: Double = 0.0
     private var longitudActual: Double = 0.0
@@ -62,6 +68,23 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         setTheme(R.style.SplashTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Places.initialize(applicationContext, getString(R.string.google_maps_key))
+        autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
+                as AutocompleteSupportFragment
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG))
+        autocompleteFragment.setOnPlaceSelectedListener(object :PlaceSelectionListener{
+            override fun onError(p0: Status) {
+                Toast.makeText(this@MapActivity, "Some Error in Search", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onPlaceSelected(place: Place) {
+                //val add = place.address
+                // val id = place.id
+                val latLng = place.latLng!!
+                zoomOnMap(latLng)
+            }
+        })
         createFragment()
 
         val goToAuthButton = findViewById<ImageButton>(R.id.goToAuthButton)
@@ -274,5 +297,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
 
     override fun showBikeBrokenMessage() {
         Toast.makeText(this, "Bicicleta averiada, por favor eliga otra", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun zoomOnMap(latLng: LatLng) {
+        val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(latLng, 12f)
+        map.animateCamera(newLatLngZoom)
     }
 }
