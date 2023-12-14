@@ -139,6 +139,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 12.0f))
         enableLocation()
         map.setOnMarkerClickListener(this)
+        map.uiSettings.isZoomControlsEnabled = true
     }
 
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
@@ -232,6 +233,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     override fun onMarkerClick(marker: Marker): Boolean {
         // Bike Info
         //val bikeId = marker.tag as? String
+        zoomOnMap(marker.position)
         val distanceKm = calculateDistanceFromCurrentToBike(marker.position)
 
         // Dialog
