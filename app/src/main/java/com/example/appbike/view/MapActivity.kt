@@ -73,6 +73,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
                 Toast.makeText(this@MapActivity, "Some Error in Search", Toast.LENGTH_SHORT).show()
             }
 
+
             override fun onPlaceSelected(place: Place) {
                 //val add = place.address
                 // val id = place.id
@@ -95,12 +96,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
             popupMenu.show()
         }
 
-        //Presenter initialize
-        userRepository = UserRepository()
 
-        val bikeRepository = BikeRepository()
-        presenter = RentBikePresenter(this, userRepository,bikeRepository )
-        bikeLoader = BikePresenter(bikeRepository, this)
 
         goToAuthButton.setOnClickListener {
             // Verificar si hay un usuario logeado
@@ -118,7 +114,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
                 val intent = Intent(this, AuthSignUpActivity::class.java)
                 startActivity(intent)
             }
-        }
+        }        //Presenter initialize
+        userRepository = UserRepository()
+
+        val bikeRepository = BikeRepository()
+        presenter = RentBikePresenter(this, userRepository,bikeRepository )
+        bikeLoader = BikePresenter(bikeRepository, this)
         //load bikes when start activity
         bikeLoader.loadBikes()
     }

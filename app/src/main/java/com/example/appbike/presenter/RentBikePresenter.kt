@@ -1,5 +1,6 @@
 package com.example.appbike.presenter
 
+import android.util.Log
 import com.example.appbike.model.BikeRepository
 import com.example.appbike.model.UserRepository
 import com.example.appbike.view.MapContract
@@ -12,10 +13,9 @@ class RentBikePresenter(
 ) : MapContract.Presenter {
 
     override fun onRentButtonClick(isUserLoggedIn: Boolean, isBikeSelected: Boolean, marker:Marker) {
-        if (isUserLoggedIn) {
             val userId = userRepository.getCurrentUserId()
-
             if (userId != null) {
+                Log.d("ho", userId.toString())
                 userRepository.getUserPaymentState(userId) { isUserPaid ->
                     if (isUserPaid) {
                         if (isBikeSelected) {
@@ -50,13 +50,14 @@ class RentBikePresenter(
                                 }
                             }
                         } else {
-                            view.showUserNotPaidMessage()
+                            view.showMustSelectBikeMessage()
                         }
+                    } else {
+                        view.showUserNotPaidMessage()
                     }
                 }
             } else {
                 view.navigateToLoginScreen()
             }
-        }
     }
 }

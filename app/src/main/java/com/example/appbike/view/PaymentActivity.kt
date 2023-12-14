@@ -26,7 +26,6 @@ class PaymentActivity : AppCompatActivity(), PaymentView {
         val bodyextView = findViewById<TextView>(R.id.textView10)
         val textoFormateado = Html.fromHtml(textoHTML)
         bodyextView.text = textoFormateado
-        titleTextView.text = "Pagar Suscripción"
 
         val model = PaymentModel()
         presenter = PaymentPresenter(model, this)

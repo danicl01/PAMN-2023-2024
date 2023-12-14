@@ -28,9 +28,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="231dp"
-        android:layout_marginTop="562dp"
-        android:layout_marginEnd="45dp"
+        android:layout_marginStart="240dp"
+        android:layout_marginTop="635dp"
+        android:layout_marginEnd="33dp"
         android:text="Pagar" />
 
     <Button
@@ -40,23 +40,24 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="45dp"
-        android:layout_marginTop="562dp"
-        android:layout_marginEnd="231dp"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="635dp"
+        android:layout_marginEnd="240dp"
         android:text="Cancelar" />
 
     <TextView
         android:id="@+id/textView10"
-        android:layout_width="wrap_content"
-        android:layout_height="392dp"
+        android:layout_width="363dp"
+        android:layout_height="424dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="29dp"
-        android:layout_marginTop="168dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="171dp"
+        android:layout_marginTop="153dp"
+        android:layout_marginEnd="19dp"
+        android:layout_marginBottom="154dp"
         android:text="TextView"
+        android:textSize="16sp"
         tools:text="@string/subscribe_text" />
 </RelativeLayout>
