@@ -49,13 +49,11 @@ class SignInModel {
     }
 
     fun updateUserName(userId: String, newName: String, callback: (Boolean, String?) -> Unit) {
-        val database: FirebaseDatabase = FirebaseDatabase.getInstance("https://bicicletaapp-2324-default-rtdb.europe-west1.firebasedatabase.app")
-        val usuarioRef: DatabaseReference = database.reference.child("usuarios").child(userId)
-
+        val userRef = databaseRef.child("usuarios").child(userId)
         val infoUsuario = HashMap<String, Any>()
         infoUsuario["name"] = newName
 
-        usuarioRef.updateChildren(infoUsuario)
+        userRef.updateChildren(infoUsuario)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     callback(true, null)
@@ -69,6 +67,34 @@ class SignInModel {
         firebaseAuth.signOut()
     }
 
-    // Otros métodos relacionados con la autenticación y base de datos
+    fun getUserPaymentState(userId: String, callback: (Boolean) -> Unit) {
+        val userRef = databaseRef.child("usuarios").child(userId).child("state")
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val state = snapshot.getValue(String::class.java)
+                val isUserPaid = state?.equals("Usuario de Pago", ignoreCase = true) == true
+                callback(isUserPaid)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Manejar el error de lectura de la base de datos si es necesario
+                callback(false)
+            }
+        })
+    }
+    fun updateUserState(userId: String, newState: String, callback: (Boolean) -> Unit) {
+        val userRef = databaseRef.child("usuarios").child(userId).child("state")
+
+        userRef.setValue(newState)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                // Manejar el fallo de la actualización si es necesario
+                callback(false)
+            }
+    }
+
 
 }

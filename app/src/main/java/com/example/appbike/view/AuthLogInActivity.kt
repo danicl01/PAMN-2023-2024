@@ -50,7 +50,14 @@ class AuthLogInActivity : AppCompatActivity() {
             val email = emailText.text.toString()
             val password = passwordText.text.toString()
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                authPresenter.signIn(email, password,this)
+                authPresenter.signIn(email, password, this) { success ->
+                    if (success) {
+                        finish()
+                    } else {
+
+                    }
+                }
+
             } else {
                 showEmptyFieldsWarning()
             }
@@ -69,6 +76,7 @@ class AuthLogInActivity : AppCompatActivity() {
             })
             .show()
     }
+
 
 
 }

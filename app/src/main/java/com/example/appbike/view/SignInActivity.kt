@@ -1,7 +1,7 @@
 package com.example.appbike.view
 
-import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -11,16 +11,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.example.appbike.MainActivity
 import com.example.appbike.R
-import com.example.appbike.model.AuthSignInModel
-import com.example.appbike.model.AuthSignUpModel
-import com.example.appbike.model.Bike
-import com.example.appbike.model.BikeRepository
 import com.example.appbike.model.SignInModel
-import com.example.appbike.presenter.AuthPresenter
 import com.example.appbike.presenter.SignInPresenter
-import com.google.firebase.auth.FirebaseAuth
 
 class SignInActivity : AppCompatActivity(), SignInView {
 
@@ -35,7 +28,7 @@ class SignInActivity : AppCompatActivity(), SignInView {
         val logoutButton = findViewById<Button>(R.id.logOutButton)
         val paymentButton = findViewById<Button>(R.id.paymentButton)
         val editNameButton = findViewById<Button>(R.id.EditNamebutton)
-
+        paymentButton.text = "Subscribirse"
         backButton.setOnClickListener {
             signInPresenter.navigateToMapActivity()
         }
@@ -46,7 +39,7 @@ class SignInActivity : AppCompatActivity(), SignInView {
         }
 
         paymentButton.setOnClickListener {
-            signInPresenter.navigateToPaymentActivity()
+            signInPresenter.onPaymentButtonClick()
         }
         editNameButton.setOnClickListener {
             showEditNamePopup()
@@ -67,7 +60,9 @@ class SignInActivity : AppCompatActivity(), SignInView {
     }
 
     override fun navigateToMapActivity() {
-        startActivity(Intent(this, MapActivity::class.java))
+        val intent = Intent(this, MapActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        startActivity(intent)
     }
 
     override fun navigateToPaymentActivity() {
@@ -95,9 +90,7 @@ class SignInActivity : AppCompatActivity(), SignInView {
         userNameTextView.text = newName
     }
     override fun showEditNamePopup() {
-        // Aquí implementa la lógica para mostrar el popup de edición de nombre
-        // Puedes usar AlertDialog u otra biblioteca de diálogo
-        // Ejemplo con AlertDialog:
+
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Editar Nombre")
 
@@ -113,6 +106,22 @@ class SignInActivity : AppCompatActivity(), SignInView {
 
         builder.show()
     }
+
+    override fun updatePaymentButtonText(text: String) {
+        val paymentButton = findViewById<Button>(R.id.paymentButton)
+        paymentButton.text = text
+        if (text == "Cancelar Subscripción") {
+            paymentButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.colorCancelSubscriptionBackground))
+        } else {
+            // Restaura el color original en caso contrario
+            paymentButton.backgroundTintList = ColorStateList.valueOf(resources.getColor(R.color.colorOriginalBackground))
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        signInPresenter.updatePaymentButtonText()
+    }
+
 }
 
 

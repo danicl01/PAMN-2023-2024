@@ -42,12 +42,16 @@ class PaymentActivity : AppCompatActivity(), PaymentView {
 
     override fun showPaymentSuccess() {
         Toast.makeText(this, "Pago realizado con éxito", Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, SignInActivity::class.java))
+        val intent = Intent(this, SignInActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        startActivity(intent)
         finish()
     }
 
     override fun navigateToProfile() {
-        startActivity(Intent(this, SignInActivity::class.java))
+        val intent = Intent(this, SignInActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        startActivity(intent)
         finish()
     }
 }

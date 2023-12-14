@@ -1,5 +1,6 @@
 package com.example.appbike.presenter
 
+import android.util.Log
 import com.example.appbike.model.SignInModel
 import com.example.appbike.view.SignInView
 
@@ -23,7 +24,7 @@ class SignInPresenter(private val signInModel: SignInModel) {
                     signInView?.showSuccessMessage("Nombre actualizado exitosamente")
                     onUserNameUpdated(newName)
                 } else {
-                    signInView?.showErrorMessage(message ?: "Error desconocido al actualizar el nombre")
+                    signInView?.showErrorMessage("Error desconocido al actualizar el nombre")
                 }
             }
         } else {
@@ -46,6 +47,42 @@ class SignInPresenter(private val signInModel: SignInModel) {
             }
         }
     }
+    fun onPaymentButtonClick() {
+        val currentUser = signInModel.getCurrentUser()
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            signInModel.getUserPaymentState(userId) { isUserPaid ->
+                if (isUserPaid) {
+                    // Usuario de pago, cambiar a usuario gratis
+                    signInModel.updateUserState(userId,"Usuario Gratis") { isSuccess ->
+                        if (isSuccess) {
+                            signInView?.showSuccessMessage("Cancelada la subscripción exitosamente")
+                            updatePaymentButtonText()
+                        } else {
+                            signInView?.showErrorMessage("Error desconocido al cancelar la subscripción")
+                        }
+                    }
+                } else {
+                    // Usuario gratis, llevar a PaymentActivity
+                    signInView?.navigateToPaymentActivity()
+                }
+            }
+        } else {
+            signInView?.showErrorMessage("Usuario no autenticado")
+        }
+    }
+    fun updatePaymentButtonText() {
+        val currentUser = signInModel.getCurrentUser()
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            signInModel.getUserPaymentState(userId) { isUserPaid ->
+                signInView?.updatePaymentButtonText(if (isUserPaid) "Cancelar Subscripción" else "Subscribirse")
+                Log.d("UpdateButtonText", "Text updated: ${if (isUserPaid) "Cancelar Subscripción" else "Subscribirse"}")
+            }
+        } else {
+            signInView?.showErrorMessage("Usuario no autenticado")
+        }
+    }
 
     fun signOut() {
         signInModel.signOut()
@@ -54,14 +91,6 @@ class SignInPresenter(private val signInModel: SignInModel) {
 
     fun navigateToMapActivity() {
         signInView?.navigateToMapActivity()
-    }
-
-    fun navigateToPaymentActivity() {
-        signInView?.navigateToPaymentActivity()
-    }
-
-    fun onEditNameButtonClicked() {
-        signInView?.showEditNamePopup()
     }
 
 

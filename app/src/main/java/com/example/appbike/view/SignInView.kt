@@ -12,9 +12,11 @@ interface SignInView {
 
     fun showSuccessMessage(message:String)
 
-    fun showErrorMessage(message:String)
+    fun showErrorMessage(message: String)
 
     fun showEditNamePopup()
 
     fun updateUserName(newName: String)
+
+    fun updatePaymentButtonText(text: String)
 }

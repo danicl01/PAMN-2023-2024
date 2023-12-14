@@ -24,4 +24,6 @@ class AuthSignInModel {
     fun signOut() {
         firebaseAuth.signOut()
     }
+
+
 }
