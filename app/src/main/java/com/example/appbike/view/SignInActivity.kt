@@ -7,6 +7,7 @@ import android.text.InputType
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -24,7 +25,7 @@ class SignInActivity : AppCompatActivity(), SignInView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_profile)
 
-        val backButton = findViewById<Button>(R.id.backButton)
+        val backButton = findViewById<ImageButton>(R.id.backButton)
         val logoutButton = findViewById<Button>(R.id.logOutButton)
         val paymentButton = findViewById<Button>(R.id.paymentButton)
         val editNameButton = findViewById<Button>(R.id.EditNamebutton)

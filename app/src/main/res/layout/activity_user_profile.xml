@@ -1,175 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_gradient"
     tools:context=".view.SignInActivity">
 
-    <TextView
-        android:id="@+id/userEmailTextView"
-        android:layout_width="285dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="54dp"
-        android:layout_marginTop="214dp"
-        android:layout_marginEnd="57dp"
-        android:layout_marginBottom="535dp"
-        android:text="Email"
-        android:textAlignment="center"
-        android:textSize="18sp" />
 
-    <TextView
-        android:id="@+id/userNameTextView"
-        android:layout_width="272dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="29dp"
-        android:layout_marginTop="126dp"
-        android:layout_marginEnd="92dp"
-        android:layout_marginBottom="623dp"
-        android:text="Usuario"
-        android:textAlignment="textStart"
-        android:textSize="25sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/userEmailTextView2"
-        android:layout_width="wrap_content"
-        android:layout_height="25dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="54dp"
-        android:layout_marginTop="189dp"
-        android:layout_marginEnd="271dp"
-        android:layout_marginBottom="571dp"
-        android:text="Email"
-        android:textAlignment="textStart"
-        android:textSize="15sp"
-        android:textStyle="bold" />
-
-    <Button
+    <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="105dp"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="256dp"
-        android:layout_marginTop="670dp"
-        android:layout_marginEnd="33dp"
-        android:layout_marginBottom="60dp"
-        android:text="Mapa" />
-
-    <Button
-        android:id="@+id/logOutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="55dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="33dp"
-        android:layout_marginTop="670dp"
-        android:layout_marginEnd="255dp"
-        android:layout_marginBottom="60dp"
-        android:backgroundTint="#FF0000"
-        android:text="Logout" />
+        android:text="Mapa"
+        android:background="#FFFFFF"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/back_to_map"
+        />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="122dp"
-        android:layout_marginEnd="124dp"
-        android:layout_marginBottom="685dp"
         android:text="Perfil"
-        android:textAlignment="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
         android:textSize="50sp" />
 
-    <Button
-        android:id="@+id/paymentButton"
-        android:layout_width="wrap_content"
-        android:layout_height="68dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="123dp"
-        android:layout_marginTop="416dp"
-        android:layout_marginEnd="126dp"
-        android:layout_marginBottom="301dp" />
-
-    <TextView
-        android:id="@+id/UserStateTextView5"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="54dp"
-        android:layout_marginEnd="271dp"
-        android:layout_marginBottom="505dp"
-        android:text="Estado"
-        android:textAlignment="viewStart"
-        android:textSize="15sp"
-        android:textStyle="bold" />
+        android:layout_marginStart="20dp"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/user_name"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="8dp"
+        />
+
+        <TextView
+            android:id="@+id/userNameTextView"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="Usuario"
+            android:textAlignment="textStart"
+            android:layout_marginStart="10dp"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/EditNamebutton"
+            android:layout_width="82dp"
+            android:layout_height="40dp"
+            android:text="Editar"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#222222" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="54dp"
-        android:layout_marginTop="280dp"
-        android:layout_marginEnd="55dp"
-        android:layout_marginBottom="474dp"
-        android:text="TextView"
-        android:textAlignment="center"
-        android:textSize="18sp" />
+        android:layout_marginStart="20dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/email_user"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/userEmailTextView"
+            android:layout_width="285dp"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#222222" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/user_paid"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:text="TextView"
+            android:layout_width="285dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:layout_marginBottom="5dp"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="8dp"
+        android:background="#222222" />
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
-        android:layout_height="49dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="78dp"
-        android:layout_marginTop="367dp"
-        android:layout_marginEnd="79dp"
-        android:layout_marginBottom="369dp"
-        android:text="¿ Desea alquilar alguna bicicleta? ¡Subscríbase ahora!"
-        android:textAlignment="center" />
+        android:layout_height="20dp"
+        android:layout_marginTop="10dp"
+        android:text="¿ Desea alquilar alguna bicicleta?"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"/>
+
 
     <Button
-        android:id="@+id/EditNamebutton"
-        android:layout_width="82dp"
-        android:layout_height="45dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="287dp"
-        android:layout_marginTop="126dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="614dp"
-        android:text="Editar"
-        android:textSize="12sp" />
+        android:id="@+id/paymentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:text="¡Subscríbase ahora!"
+        android:textColor="#176ae6"
+        android:textSize="14sp"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"/>
 
-</RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="20dp"
+        android:background="#222222" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logout_user"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/logOutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_marginStart="10dp"
+            android:backgroundTint="#FF0000"
+            android:text="Logout" />
+
+    </LinearLayout>
+
+</LinearLayout>
