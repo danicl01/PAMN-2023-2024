@@ -50,8 +50,10 @@ class RentBikePresenter(
                                 }
                             }
                         } else {
-                            view.showUserNotPaidMessage()
+                            view.showMustSelectBikeMessage()
                         }
+                    } else {
+                        view.showUserNotPaidMessage()
                     }
                 }
             } else {
