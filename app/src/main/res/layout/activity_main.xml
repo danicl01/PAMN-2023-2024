@@ -17,7 +17,7 @@
     <View
         android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
         android:background="@drawable/top_curved_cardview"
         />
 
@@ -27,18 +27,17 @@
         android:layout_height="40dp"
         android:text="GRANCA BIKE"
         android:textStyle="bold"
-        android:gravity="center"
+        android:gravity="center|top"
         android:textColor="#FFFFFFFF"
         android:layout_gravity="center_horizontal|top"
-        android:textSize="22sp"
-
+        android:textSize="20sp"
         />
 
     <!-- Nueva vista en la parte inferior -->
     <View
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_gravity="bottom"
         android:background="@drawable/bottom_curved_view"
         />
@@ -53,5 +52,18 @@
         android:src="@drawable/ic_user_log"
         android:drawablePadding="8dp"
     />
+
+    <ImageButton
+    android:id="@+id/mapOptionsMenu"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:layout_gravity="bottom"
+    android:layout_marginLeft="50dp"
+    android:layout_marginBottom="5dp"
+    android:background="#FFA500"
+    android:src="@drawable/map_type"
+    android:drawablePadding="8dp"
+    />
+
 
 </FrameLayout>

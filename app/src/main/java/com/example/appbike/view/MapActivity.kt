@@ -15,6 +15,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -64,6 +65,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         createFragment()
 
         val goToAuthButton = findViewById<ImageButton>(R.id.goToAuthButton)
+        val mapOptionButton:ImageButton = findViewById(R.id.mapOptionsMenu)
+        val popupMenu = PopupMenu(this, mapOptionButton)
+        popupMenu.menuInflater.inflate(R.menu.map_options, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            changeMapType(menuItem.itemId)
+            true
+        }
+
+        mapOptionButton.setOnClickListener {
+            popupMenu.show()
+        }
 
         //Presenter initialize
         userRepository = UserRepository()
@@ -127,6 +139,15 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
                 }
         } else {
             requestLocationPermission()
+        }
+    }
+
+    private fun changeMapType(ItemId: Int) {
+        when(ItemId) {
+            R.id.normal_map -> map.mapType = GoogleMap.MAP_TYPE_NORMAL
+            R.id.hybrid_map -> map.mapType = GoogleMap.MAP_TYPE_HYBRID
+            R.id.satellite_map -> map.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            R.id.terrain_map -> map.mapType = GoogleMap.MAP_TYPE_TERRAIN
         }
     }
 
