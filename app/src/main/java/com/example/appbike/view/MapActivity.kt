@@ -31,7 +31,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -44,15 +43,14 @@ import com.google.firebase.auth.FirebaseAuth
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, GoogleMap.OnMarkerClickListener {
 
-
     private lateinit var map: GoogleMap
     private lateinit var bikeLoader: BikeLoader
     private lateinit var presenter: RentBikePresenter
     private lateinit var userRepository: UserRepository
     private lateinit var autocompleteFragment: AutocompleteSupportFragment
 
-    private var latitudActual: Double = 0.0
-    private var longitudActual: Double = 0.0
+    private var currentLatitude: Double = 0.0
+    private var currentLongitude: Double = 0.0
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
@@ -61,29 +59,42 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     override fun onCreate(savedInstanceState: Bundle?) {
         Thread.sleep(1500)
         setTheme(R.style.SplashTheme)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initializeDependencies()
+        setUpAutoCompletePlace()
+        createFragment()
+        setPopUpMenu()
+        setAuthButton()
+
+        bikeLoader.loadBikes()
+    }
+
+    private fun initializeDependencies() {
         Places.initialize(applicationContext, getString(R.string.google_maps_key))
-        autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
-                as AutocompleteSupportFragment
+        userRepository = UserRepository()
+        val bikeRepository = BikeRepository()
+        presenter = RentBikePresenter(this, userRepository,bikeRepository )
+        bikeLoader = BikePresenter(bikeRepository, this)
+    }
+
+    private fun setUpAutoCompletePlace() {
+        autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
         autocompleteFragment.setPlaceFields(listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG))
         autocompleteFragment.setOnPlaceSelectedListener(object :PlaceSelectionListener{
             override fun onError(p0: Status) {
                 Toast.makeText(this@MapActivity, "Some Error in Search", Toast.LENGTH_SHORT).show()
             }
 
-
             override fun onPlaceSelected(place: Place) {
-                //val add = place.address
-                // val id = place.id
-                val latLng = place.latLng!!
-                zoomOnMap(latLng)
+                zoomOnMap(place.latLng!!)
             }
         })
-        createFragment()
+    }
 
-        val goToAuthButton = findViewById<ImageButton>(R.id.goToAuthButton)
+    private fun setPopUpMenu() {
         val mapOptionButton:ImageButton = findViewById(R.id.mapOptionsMenu)
         val popupMenu = PopupMenu(this, mapOptionButton)
         popupMenu.menuInflater.inflate(R.menu.map_options, popupMenu.menu)
@@ -91,37 +102,27 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
             changeMapType(menuItem.itemId)
             true
         }
-
         mapOptionButton.setOnClickListener {
             popupMenu.show()
         }
+    }
 
-
+    private fun setAuthButton() {
+        val goToAuthButton = findViewById<ImageButton>(R.id.goToAuthButton)
 
         goToAuthButton.setOnClickListener {
-            // Verificar si hay un usuario logeado
             val currentUser = FirebaseAuth.getInstance().currentUser
 
             if (currentUser != null) {
-                // Ya hay un usuario logeado, puedes redirigir a la pantalla de perfil u otra actividad
                 Log.d("MapActivity", "Usuario logeado. Redirigiendo a la pantalla de perfil.")
-                // Ejemplo de redirección a la pantalla de perfil
                 val intent = Intent(this, SignInActivity::class.java)
                 startActivity(intent)
             } else {
-                // No hay usuario logeado, inicia la actividad de autenticación
                 Log.d("MapActivity", "Ningún usuario logeado. Iniciando AuthActivity.")
                 val intent = Intent(this, AuthSignUpActivity::class.java)
                 startActivity(intent)
             }
-        }        //Presenter initialize
-        userRepository = UserRepository()
-
-        val bikeRepository = BikeRepository()
-        presenter = RentBikePresenter(this, userRepository,bikeRepository )
-        bikeLoader = BikePresenter(bikeRepository, this)
-        //load bikes when start activity
-        bikeLoader.loadBikes()
+        }
     }
 
 
@@ -154,8 +155,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location: Location? ->
                     location?.let {
-                        latitudActual = it.latitude
-                        longitudActual = it.longitude
+                        currentLatitude = it.latitude
+                        currentLongitude = it.longitude
                     }
                 }
         } else {
@@ -264,7 +265,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
 
     private fun calculateDistanceFromCurrentToBike(bikePosition: LatLng): Double {
         val result = FloatArray(10)
-        Location.distanceBetween(latitudActual, longitudActual, bikePosition.latitude, bikePosition.longitude, result)
+        Location.distanceBetween(currentLatitude, currentLongitude, bikePosition.latitude, bikePosition.longitude, result)
         return result[0].toDouble() / 1000
     }
 
