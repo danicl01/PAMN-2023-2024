@@ -19,7 +19,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.appbike.model.Bike
 import com.example.appbike.model.BikeRepository
@@ -55,6 +54,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
 
+    private lateinit var permissionManager: PermissionManager
+
     companion object {
         const val REQUEST_CODE_LOCATION = 0
     }
@@ -64,6 +65,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         setTheme(R.style.SplashTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        permissionManager = PermissionManager(this)
 
         initializeDependencies()
         setUpAutoCompletePlace()
@@ -120,7 +123,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
 
     private fun setAuthButton() {
         val goToAuthButton = findViewById<ImageButton>(R.id.goToAuthButton)
-
         goToAuthButton.setOnClickListener {
             val currentUser = FirebaseAuth.getInstance().currentUser
 
@@ -143,23 +145,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        val initialLocation = LatLng(28.09973, -15.41343) // Coordenadas para LPGC
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 12.0f))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(28.09973, -15.41343), 12.0f)) //Coordenadas para LPGC
         enableLocation()
         map.setOnMarkerClickListener(this)
         map.uiSettings.isZoomControlsEnabled = true
     }
 
     private fun checkLocationPermissionAndEnable() {
-        if (isLocationPermissionGranted()) {
-            if (isLocationEnabled()) {
-                enableLocation()
-            } else {
-                showEnableLocationDialog()
-            }
-        } else {
-            requestLocationPermission()
-        }
+        if (permissionManager.isLocationPermissionGranted()) {
+            if (isLocationEnabled()) { enableLocation()
+            } else showEnableLocationDialog()
+        } else requestLocationPermission()
     }
 
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
@@ -185,21 +181,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         }
     }
 
-
-
     private fun requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        ) {
+        if (permissionManager.shouldShowLocationPermissionRationale()) {
             Toast.makeText(this, "Go to settings and accept the permissions", Toast.LENGTH_SHORT).show()
         } else {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_CODE_LOCATION
-            )
+            permissionManager.requestLocationPermission(REQUEST_CODE_LOCATION)
         }
     }
 
@@ -238,7 +224,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
                 startActivityForResult(enableLocationIntent, REQUEST_CODE_LOCATION)
             }
             .setNegativeButton("No") { dialog, _ ->
-                // Puedes manejar el caso en el que el usuario elige no activar la ubicación
                 dialog.dismiss()
             }
             .show()
@@ -247,11 +232,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_LOCATION) {
-            // Verifica el estado de la ubicación después de que el usuario regresa de la pantalla de configuración de ubicación
             if (isLocationEnabled()) {
                 enableLocation()
             } else {
-                // Puedes manejar el caso en el que el usuario eligió no activar la ubicación
                 Toast.makeText(this, "La ubicación no está activada. Algunas funciones pueden no estar disponibles.", Toast.LENGTH_SHORT).show()
             }
         }
@@ -277,7 +260,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
             if (markerColor != null) {
                 map.addMarker(MarkerOptions().position(bikeLocation).title(bike.name).icon(markerColor))
             }
-
         }
     }
 
@@ -294,29 +276,24 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         val dialogView = inflater.inflate(R.layout.dialog_bike_info, null)
         builder.setView(dialogView)
 
-        // Obtén referencias a los elementos del diseño personalizado
         val titleTextView = dialogView.findViewById<TextView>(R.id.textViewDialogTitle)
         val bikeIconImageView = dialogView.findViewById<ImageView>(R.id.imageViewBikeIcon)
         val bikeInfoTextView = dialogView.findViewById<TextView>(R.id.textViewBikeInfo)
         val checkBoxReservar = dialogView.findViewById<CheckBox>(R.id.checkBoxReservar)
 
-        // Establece la información de la bicicleta en los elementos del diseño personalizado
         titleTextView.text = "Información de la Bicicleta"
-        bikeIconImageView.setImageResource(R.drawable.ic_bike_24) // Reemplaza con el recurso correcto
+        bikeIconImageView.setImageResource(R.drawable.ic_bike_24)
         bikeInfoTextView.text = "${marker.title} \nA: ${String.format("%.2f", distanceKm)} km"
 
-        builder.setPositiveButton("Alquilar") { dialog, which ->
+        builder.setPositiveButton("Alquilar") { _, _ ->
             handleRentButtonClick(checkBoxReservar.isChecked, marker)
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
     }
 
-    private fun handleRentButtonClick(isBikeSelected: Boolean, marker: Marker) {
-        val isUserLoggedIn = userRepository.isUserLoggedIn()
-        presenter.onRentButtonClick(isUserLoggedIn, isBikeSelected, marker)
-    }
-
+    private fun handleRentButtonClick(isBikeSelected: Boolean, marker: Marker) =
+        presenter.onRentButtonClick(userRepository.isUserLoggedIn(), isBikeSelected, marker)
 
     private fun calculateDistanceFromCurrentToBike(bikePosition: LatLng): Double {
         val result = FloatArray(10)
@@ -324,37 +301,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         return result[0].toDouble() / 1000
     }
 
-    override fun showBikeReservedMessage() {
-        Toast.makeText(this, "Bicicleta reservada", Toast.LENGTH_SHORT).show()
-    }
+    // MapContract.View functions
+    override fun navigateToLoginScreen() = startActivity(Intent(this, AuthSignUpActivity::class.java))
+    override fun showBikeReservedMessage() = Toast.makeText(this, "Bicicleta reservada", Toast.LENGTH_SHORT).show()
+    override fun showMustSelectBikeMessage() = Toast.makeText(this, "Debe seleccionar una bicicleta", Toast.LENGTH_SHORT).show()
+    override fun showUserNotPaidMessage() = Toast.makeText(this, "Usuario no registrado como usuario de pago", Toast.LENGTH_SHORT).show()
+    override fun showBikeNotReservedMessage() = Toast.makeText(this, "Error al reservar la bicicleta", Toast.LENGTH_SHORT).show()
+    override fun showBikeNotAvailableMessage() = Toast.makeText(this, "Bicicleta Reservada, por favor eliga otra", Toast.LENGTH_SHORT).show()
+    override fun showBikeBrokenMessage() = Toast.makeText(this, "Bicicleta averiada, por favor eliga otra", Toast.LENGTH_SHORT).show()
 
-    override fun showMustSelectBikeMessage() {
-        Toast.makeText(this, "Debe seleccionar una bicicleta", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showUserNotPaidMessage() {
-        Toast.makeText(this, "Usuario no registrado como usuario de pago", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun navigateToLoginScreen() {
-        // Redirigir a la pantalla de inicio de sesión
-        val intent = Intent(this, AuthSignUpActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun showBikeNotReservedMessage() {
-        Toast.makeText(this, "Error al reservar la bicicleta", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showBikeNotAvailableMessage() {
-        Toast.makeText(this, "Bicicleta Reservada, por favor eliga otra", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showBikeBrokenMessage() {
-        Toast.makeText(this, "Bicicleta averiada, por favor eliga otra", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun loadBikes() {
-        bikeLoader.loadBikes()
-    }
+    override fun loadBikes() = bikeLoader.loadBikes()
 }
