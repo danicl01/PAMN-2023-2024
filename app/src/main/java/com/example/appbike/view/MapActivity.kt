@@ -2,10 +2,13 @@ package com.example.appbike.view
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.CheckBox
@@ -41,7 +44,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.firebase.auth.FirebaseAuth
 
-class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, GoogleMap.OnMarkerClickListener {
+class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, GoogleMap.OnMarkerClickListener, BikeLoader {
 
     private lateinit var map: GoogleMap
     private lateinit var bikeLoader: BikeLoader
@@ -49,17 +52,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     private lateinit var userRepository: UserRepository
     private lateinit var autocompleteFragment: AutocompleteSupportFragment
 
-    private var currentLatitude: Double = 0.0
-    private var currentLongitude: Double = 0.0
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Thread.sleep(1500)
+        Thread.sleep(1500)   // WE HAVE TO REPLACE THIS FOR A HANDLER
         setTheme(R.style.SplashTheme)
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -68,8 +70,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         createFragment()
         setPopUpMenu()
         setAuthButton()
-
-        bikeLoader.loadBikes()
+        checkLocationPermissionAndEnable()
+        loadBikes()
     }
 
     private fun initializeDependencies() {
@@ -107,6 +109,15 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         }
     }
 
+    private fun changeMapType(itemId: Int) {
+        when(itemId) {
+            R.id.normal_map -> map.mapType = GoogleMap.MAP_TYPE_NORMAL
+            R.id.hybrid_map -> map.mapType = GoogleMap.MAP_TYPE_HYBRID
+            R.id.satellite_map -> map.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            R.id.terrain_map -> map.mapType = GoogleMap.MAP_TYPE_TERRAIN
+        }
+    }
+
     private fun setAuthButton() {
         val goToAuthButton = findViewById<ImageButton>(R.id.goToAuthButton)
 
@@ -125,7 +136,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         }
     }
 
-
     private fun createFragment() {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -140,6 +150,18 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         map.uiSettings.isZoomControlsEnabled = true
     }
 
+    private fun checkLocationPermissionAndEnable() {
+        if (isLocationPermissionGranted()) {
+            if (isLocationEnabled()) {
+                enableLocation()
+            } else {
+                showEnableLocationDialog()
+            }
+        } else {
+            requestLocationPermission()
+        }
+    }
+
     private fun isLocationPermissionGranted() = ContextCompat.checkSelfPermission(
         this,
         Manifest.permission.ACCESS_FINE_LOCATION
@@ -152,26 +174,18 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
             map.isMyLocationEnabled = true
             // Current Location
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    location?.let {
-                        currentLatitude = it.latitude
-                        currentLongitude = it.longitude
-                    }
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    latitude = it.latitude
+                    longitude = it.longitude
                 }
+            }
         } else {
             requestLocationPermission()
         }
     }
 
-    private fun changeMapType(ItemId: Int) {
-        when(ItemId) {
-            R.id.normal_map -> map.mapType = GoogleMap.MAP_TYPE_NORMAL
-            R.id.hybrid_map -> map.mapType = GoogleMap.MAP_TYPE_HYBRID
-            R.id.satellite_map -> map.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            R.id.terrain_map -> map.mapType = GoogleMap.MAP_TYPE_TERRAIN
-        }
-    }
+
 
     private fun requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -210,7 +224,46 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         }
     }
 
+    private fun isLocationEnabled(): Boolean {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    private fun showEnableLocationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Activar Ubicación")
+            .setMessage("Para usar la aplicación, es necesario activar la ubicación. ¿Desea activar la ubicación ahora?")
+            .setPositiveButton("Sí") { _, _ ->
+                val enableLocationIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                startActivityForResult(enableLocationIntent, REQUEST_CODE_LOCATION)
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                // Puedes manejar el caso en el que el usuario elige no activar la ubicación
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_LOCATION) {
+            // Verifica el estado de la ubicación después de que el usuario regresa de la pantalla de configuración de ubicación
+            if (isLocationEnabled()) {
+                enableLocation()
+            } else {
+                // Puedes manejar el caso en el que el usuario eligió no activar la ubicación
+                Toast.makeText(this, "La ubicación no está activada. Algunas funciones pueden no estar disponibles.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun zoomOnMap(latLng: LatLng) {
+        val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(latLng, 12f)
+        map.animateCamera(newLatLngZoom)
+    }
+
     override fun displayBikes(bikes: List<Bike>) {
+        if (!::map.isInitialized) return
         for (bike in bikes) {
             val bikeLocation = LatLng(bike.latitude, bike.altitude)
             val markerColor = when(bike.state) {
@@ -229,12 +282,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     }
 
     override fun onMarkerClick(marker: Marker): Boolean {
-        // Bike Info
-        //val bikeId = marker.tag as? String
         zoomOnMap(marker.position)
         val distanceKm = calculateDistanceFromCurrentToBike(marker.position)
+        showBikeInfoDialog(marker.title, distanceKm, marker)
+        return true
+    }
 
-        // Dialog
+    private fun showBikeInfoDialog(title: String?, distanceKm: Double, marker: Marker) {
         val builder = AlertDialog.Builder(this)
         val inflater = LayoutInflater.from(this)
         val dialogView = inflater.inflate(R.layout.dialog_bike_info, null)
@@ -251,21 +305,22 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         bikeIconImageView.setImageResource(R.drawable.ic_bike_24) // Reemplaza con el recurso correcto
         bikeInfoTextView.text = "${marker.title} \nA: ${String.format("%.2f", distanceKm)} km"
 
-
         builder.setPositiveButton("Alquilar") { dialog, which ->
-            val isUserLoggedIn = userRepository.isUserLoggedIn()
-            val isBikeSelected = checkBoxReservar.isChecked
-            presenter.onRentButtonClick(isUserLoggedIn, isBikeSelected,marker)
+            handleRentButtonClick(checkBoxReservar.isChecked, marker)
         }
         builder.setNegativeButton("Cancelar", null)
         builder.show()
-        return true
+    }
+
+    private fun handleRentButtonClick(isBikeSelected: Boolean, marker: Marker) {
+        val isUserLoggedIn = userRepository.isUserLoggedIn()
+        presenter.onRentButtonClick(isUserLoggedIn, isBikeSelected, marker)
     }
 
 
     private fun calculateDistanceFromCurrentToBike(bikePosition: LatLng): Double {
         val result = FloatArray(10)
-        Location.distanceBetween(currentLatitude, currentLongitude, bikePosition.latitude, bikePosition.longitude, result)
+        Location.distanceBetween(latitude, longitude, bikePosition.latitude, bikePosition.longitude, result)
         return result[0].toDouble() / 1000
     }
 
@@ -299,8 +354,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         Toast.makeText(this, "Bicicleta averiada, por favor eliga otra", Toast.LENGTH_SHORT).show()
     }
 
-    private fun zoomOnMap(latLng: LatLng) {
-        val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(latLng, 12f)
-        map.animateCamera(newLatLngZoom)
+    override fun loadBikes() {
+        bikeLoader.loadBikes()
     }
 }
