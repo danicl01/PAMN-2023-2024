@@ -33,6 +33,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
@@ -50,11 +51,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     private lateinit var presenter: RentBikePresenter
     private lateinit var userRepository: UserRepository
     private lateinit var autocompleteFragment: AutocompleteSupportFragment
+    private lateinit var permissionManager: PermissionManager
 
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
-
-    private lateinit var permissionManager: PermissionManager
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
@@ -113,11 +113,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     }
 
     private fun changeMapType(itemId: Int) {
-        when(itemId) {
-            R.id.normal_map -> map.mapType = GoogleMap.MAP_TYPE_NORMAL
-            R.id.hybrid_map -> map.mapType = GoogleMap.MAP_TYPE_HYBRID
-            R.id.satellite_map -> map.mapType = GoogleMap.MAP_TYPE_SATELLITE
-            R.id.terrain_map -> map.mapType = GoogleMap.MAP_TYPE_TERRAIN
+        map.mapType = when(itemId) {
+            R.id.normal_map -> GoogleMap.MAP_TYPE_NORMAL
+            R.id.hybrid_map -> GoogleMap.MAP_TYPE_HYBRID
+            R.id.satellite_map -> GoogleMap.MAP_TYPE_SATELLITE
+            R.id.terrain_map -> GoogleMap.MAP_TYPE_TERRAIN
+            else -> map.mapType
         }
     }
 
@@ -167,13 +168,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     private fun enableLocation() {
         if (!::map.isInitialized) return
         if (isLocationPermissionGranted()) {
-            map.isMyLocationEnabled = true
-            // Current Location
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                location?.let {
-                    latitude = it.latitude
-                    longitude = it.longitude
+            if (isLocationEnabled()) {
+                map.isMyLocationEnabled = true
+                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                    location?.let {
+                        latitude = it.latitude
+                        longitude = it.longitude
+                    }
                 }
             }
         } else {
@@ -190,23 +192,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     }
 
     @SuppressLint("MissingSuperCall", "MissingPermission")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             REQUEST_CODE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 map.isMyLocationEnabled = true
             } else {
-                Toast.makeText(
-                    this,
-                    "To activate the location, go to settings and accept the permissions",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            else -> {
-            }
+                Toast.makeText(this, "To activate the location, go to settings and accept the permissions", Toast.LENGTH_SHORT).show()
+            }else -> {}
         }
     }
 
@@ -216,17 +208,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
     }
 
     private fun showEnableLocationDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Activar Ubicación")
-            .setMessage("Para usar la aplicación, es necesario activar la ubicación. ¿Desea activar la ubicación ahora?")
-            .setPositiveButton("Sí") { _, _ ->
+        val builder = AlertDialog.Builder(this).apply {
+            setTitle("Activar Ubicación")
+            setMessage("Para usar la aplicación, es necesario activar la ubicación. ¿Desea activar la ubicación ahora?")
+            setPositiveButton("Sí") { _, _ ->
                 val enableLocationIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                 startActivityForResult(enableLocationIntent, REQUEST_CODE_LOCATION)
             }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+            setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
+        }
+        builder.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -249,17 +240,19 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         if (!::map.isInitialized) return
         for (bike in bikes) {
             val bikeLocation = LatLng(bike.latitude, bike.altitude)
-            val markerColor = when(bike.state) {
-                "En espera" ->  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
-                "Alquilada" ->  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
-                "Averiada" ->  BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
-                else -> {
-                    null
-                }
+            val markerColor = getMarkerColorForBikeState(bike.state)
+            markerColor?.let {
+                map.addMarker(MarkerOptions().position(bikeLocation).title(bike.name).icon(it))
             }
-            if (markerColor != null) {
-                map.addMarker(MarkerOptions().position(bikeLocation).title(bike.name).icon(markerColor))
-            }
+        }
+    }
+
+    private fun getMarkerColorForBikeState(state: String?): BitmapDescriptor? {
+        return when(state) {
+            "En espera" -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+            "Alquilada" -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
+            "Averiada" -> BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+            else -> null
         }
     }
 
@@ -296,6 +289,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, MapContract.View, G
         presenter.onRentButtonClick(userRepository.isUserLoggedIn(), isBikeSelected, marker)
 
     private fun calculateDistanceFromCurrentToBike(bikePosition: LatLng): Double {
+        if (latitude == 0.0 || longitude == 0.0) return 0.0
         val result = FloatArray(10)
         Location.distanceBetween(latitude, longitude, bikePosition.latitude, bikePosition.longitude, result)
         return result[0].toDouble() / 1000
